@@ -1,0 +1,8 @@
+{
+  "name"        : "File::Find::Duplicates",
+  "version"     : "*",
+  "description" : "Get a list of duplicate files in directories",
+  "author"      : "Brent Laabs",
+  "depends"     : [ "File::Find", "Digest::MD5" ],
+  "source-url"  : "git://github.com/labster/File-Find-Duplicates.git"
+}
