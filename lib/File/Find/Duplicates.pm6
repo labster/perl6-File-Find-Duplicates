@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 use v6;
-#module File::Find::Duplicates:auth<labster>;
+module File::Find::Duplicates:auth<labster>;
 
 use Digest::MD5;
 
@@ -84,25 +84,39 @@ File::Find::Duplicates - get a list of duplicate files in directories
 
 =head1 DESCRIPTION
 
-File::Find::Duplicates finds files which are duplicates of each other, by comparing size and MD5 checksums.  While it is certainly possible that files of the same size will have a hash collision, it's unlikely enough that most applications won't notice the difference.  Symbolic links can still get you into trouble, though.
+File::Find::Duplicates finds files which are duplicates of each other, by comparing size
+and MD5 checksums.  While it is certainly possible that files of the same size will have
+a hash collision, it's unlikely enough that most applications won't notice the difference.
+Symbolic links can still get you into trouble, though.
 
-The C<find_duplicates> function is the main method for accessing the function, though a C<duplicates> method for IO::Path objects is also provided.  Both take the same arguments, with the exception of C<dirs>.  Both functions return an array of arrays, listing each set of duplicate files as IO::Path objects.
+The C<find_duplicates> function is the main method for accessing the function, though a
+C<duplicates> method for IO::Path objects is also provided.  Both take the same arguments,
+with the exception of C<dirs>.  Both functions return an array of arrays, listing each set
+of duplicate files as IO::Path objects.
 
 =head2 dirs
 
-A required option, C<dirs> specifies which directories to look in.  Requires an array of paths (as ordinary strings), though it's okay if it only contains one item.  In the method form, the invocant IO::Path object serves as the directory to search through, and this option is not required.
+A required option, C<dirs> specifies which directories to look in.  Requires an array of
+paths (as ordinary strings), though it's okay if it only contains one item.  In the method
+form, the invocant IO::Path object serves as the directory to search through, and this
+option is not required.
 
 =head2 recursive
 
-Specifies whether to descend through directories encountered; default is False.  If set to a value like True, this module uses File::Find to descend the directory tree.
+Specifies whether to descend through directories encountered; default is False.  If set to
+a value like True, this module uses File::Find to descend the directory tree.
 
 =head2 ignore_empty
 
-Specifies whether or not we should bother to report empty files back as duplicates.  Defaults to False, but any value that evaluates to true will omit results with file size = 0 bytes.
+Specifies whether or not we should bother to report empty files back as duplicates.
+Defaults to False, but any value that evaluates to true will omit results with
+file size = 0 bytes.
 
 =head1 CLI Usage
 
-This module can be directly called from the command line, where it emulates some of the functionality of fdupes.  Due to a bug, some perl6 implementations might not call C<MAIN> in a module, and you might have to comment out the C<module> line to get it to work.
+This module can be directly called from the command line, where it emulates some of the
+functionality of fdupes.  Due to a bug, some perl6 implementations might not call C<MAIN>
+in a module, and you might have to comment out the C<module> line to get it to work.
 
 	$ perl Duplicates.pm6 [options] directories
 
