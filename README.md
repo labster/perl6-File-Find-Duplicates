@@ -8,9 +8,11 @@ The basic ways to call it are:
 
 	use File::Find::Duplicates;
 	#Functional form:
-	my @dupes = find_duplicates(	dirs=>['/folder1', 'path/folder2']
+	my @dupes = find_duplicates(
+					dirs=>['/folder1', 'path/folder2'],
 					recursive => True,
-					ignore_empty => True );
+					ignore_empty => True
+	);
 	#Method form, for IO::Path objects:
 	my @moredupes = "/copiedfiles".path.duplicates;
 
