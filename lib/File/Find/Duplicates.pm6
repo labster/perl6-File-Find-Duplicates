@@ -3,10 +3,10 @@ use v6;
 module File::Find::Duplicates:auth<labster>;
 
 use Digest::MD5;
+use File::Compare;
 
-sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False ) is export {
-
-    my @files;
+sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False, :$method = 'md5' ) is export {
+    my (@files, @duplicates);
     if $recursive {
         use File::Find;
         @files = map -> $d {find( dir => $d )».Str}, @dirs.flat
@@ -18,12 +18,21 @@ sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False ) is e
     my $emptyfiles = %filesizes{'0'} :delete // Nil;
       # since empty files are obviously equivalent
 
-    %filesizes 
-        ==> grep { .value ~~ Array }
-        ==> map  { computeMD5($_) }
-        ==> grep { .value ~~ Array }
-        ==> map  { .value }
-        ==> my @duplicates ;
+    if ($method eq 'compare') {
+        %filesizes
+	    ==> grep { .value ~~ Array }
+	    ==> map { .value }
+	    ==> map { compare_multiple_files($_.Array) }
+	    ==> @duplicates ;
+    }
+    else {
+        %filesizes 
+            ==> grep { .value ~~ Array }
+            ==> map  {  computeMD5($_) }
+            ==> grep { .value ~~ Array }
+            ==> map  { .value }
+            ==> @duplicates ;
+    }
 
     @duplicates.push($emptyfiles) if !$ignore_empty and $emptyfiles;
     return @duplicates;
@@ -50,13 +59,14 @@ sub computeMD5 (Pair $size_files) {
 }
 
 
-sub MAIN (:r(:$recursive), :l(:$sameline), :S($size), :n($noempty), *@directories) {
+sub MAIN (:r(:$recursive), :l(:$sameline), :S($size), :n($noempty), :c($compare), *@directories) {
     for @directories -> $d { $d.path.d or die "Given path is not a directory" };
 
     my @dupes = find_duplicates( dirs => @directories,
-                                 ignore_empty => $noempty,
-                                 :$recursive);
-    say @dupes.perl;
+				ignore_empty => $noempty,
+				method => ($compare ?? 'compare' !! 'md5'),
+				:$recursive);
+    #say @dupes.perl;
     for @dupes -> $f {
             say $f[0].s, " bytes each:" if $size;
             if $sameline { $f».path.say }
@@ -112,6 +122,12 @@ Specifies whether or not we should bother to report empty files back as duplicat
 Defaults to False, but any value that evaluates to true will omit results with
 file size = 0 bytes.
 
+=head2 method
+
+Takes "md5" (default) or "compare".  MD5 mode uses Digest::MD5 to check compare the content
+of files, which may cause some rare false positives.  The other method, "compare", uses
+File::Compare to look at the individual bytes of files.
+
 =head1 CLI Usage
 
 This module can be directly called from the command line, where it emulates some of the
@@ -127,6 +143,8 @@ in a module, and you might have to comment out the C<module> line to get it to w
 -n	--noempty	Don't include empty files in the results
 -l	--sameline	Print results on a single line
 			(careful: fdupes uses -1 instead of -l)
+-c	--compare	Compare byte-by-byte rather than via MD5 hash
+
 
 =head1 TODO
 
@@ -139,7 +157,7 @@ Probably optimize the code.  Add options for ordering and file deletion.
 
 =head1 AUTHOR
 
-Brent "Vorticity" Laabs, 2012.
+Brent "Labster" Laabs, 2012-2013.
 
 Released under the same terms as Perl 6; see the LICENSE file for details.
 

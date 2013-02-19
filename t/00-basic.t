@@ -2,7 +2,7 @@ use v6;
 use Test;
 use File::Find::Duplicates;
 
-plan 6;
+plan 7;
 
 is( find_duplicates( dirs => ['t/test-files'] )».path,
     (["t/test-files/foobar-2.txt", "t/test-files/foobar.txt"],
@@ -18,6 +18,12 @@ is( find_duplicates( dirs => ['t/test-files'], recursive => True )».path,
 is( find_duplicates( dirs => ['t/test-files'], ignore_empty => True )».path,
     (["t/test-files/foobar-2.txt", "t/test-files/foobar.txt"],),
     "Ignoring empty files");
+
+is( find_duplicates( dirs => ['t/test-files'], recursive => True, method=> 'compare')».path,
+    (["t/test-files/foobar-2.txt", "t/test-files/foobar.txt"],
+     ["t/test-files/foo1/ab.txt", "t/test-files/foo2/ab.txt"],
+     ["t/test-files/empty1", "t/test-files/empty2"]),
+    "Byte comparisons");
 
 is( find_duplicates( dirs => ['t/test-files/foo1', 't/test-files/foo2'],
                      ignore_empty => True )».path,
