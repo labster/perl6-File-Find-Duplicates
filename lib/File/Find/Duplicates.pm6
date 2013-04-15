@@ -20,17 +20,17 @@ sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False, :$met
 
     if ($method eq 'compare') {
         %filesizes
-	    ==> grep { .value ~~ Array }
-	    ==> map { .value }
-	    ==> map { compare_multiple_files($_.Array) }
+	    ==> grep( { .value ~~ Array } )
+	    ==> map( { .value } )
+	    ==> map( { compare_multiple_files($_.Array) } )
 	    ==> @duplicates ;
     }
     else {
         %filesizes 
-            ==> grep { .value ~~ Array }
-            ==> map  {  computeMD5($_) }
-            ==> grep { .value ~~ Array }
-            ==> map  { .value }
+            ==> grep( { .value ~~ Array } )
+            ==> map(  {  computeMD5($_) } )
+            ==> grep( { .value ~~ Array } )
+            ==> map(  { .value } )
             ==> @duplicates ;
     }
 
