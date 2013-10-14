@@ -152,7 +152,7 @@ Probably optimize the code.  Add options for ordering and file deletion.
 
 =head1 SEE ALSO
 
-* L<File::Tools>, from which we get File::Find.
+* L<File::Find>
 * L<Digest::MD5>
 
 =head1 AUTHOR
