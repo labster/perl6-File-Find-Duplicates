@@ -52,7 +52,7 @@ sub computeMD5 (Pair $size_files) {
     my @files = $size_files.value.flat;
     my %checksums;
 
-    for @files -> $f { %checksums.push( Digest::MD5.md5_hex( $f.open(enc=>'binary').slurp.Str ) => $f)}
+    for @files -> $f { %checksums.push( Digest::MD5.md5_hex( $f.IO.slurp ) => $f)}
 
     return %checksums;
 
