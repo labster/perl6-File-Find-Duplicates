@@ -2,7 +2,7 @@
 use v6;
 module File::Find::Duplicates:auth<labster>;
 
-use Digest::MD5;
+use Digest;
 use File::Compare;
 
 sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False, :$method = 'md5' ) is export {
@@ -52,7 +52,7 @@ sub computeMD5 (Pair $size_files) {
     my @files = $size_files.value.flat;
     my %checksums;
 
-    for @files -> $f { %checksums.push( Digest::MD5.md5_hex( $f.open(enc=>'binary').slurp.Str ) => $f)}
+    for @files -> $f { %checksums.push( md5( $f.IO.slurp(:bin) ).list».fmt("%02x").join => $f)}
 
     return %checksums;
 
