@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "File::Find::Duplicates",
   "version"     : "*",
   "description" : "Get a list of duplicate files in directories",
