@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "File::Find::Duplicates",
   "license"     : "Artistic-2.0",
   "version"     : "*",
